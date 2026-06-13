@@ -1,1 +1,115 @@
-kamera
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odfoť sa a pošli</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#ffffff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    text-align:center;
+    padding:20px;
+}
+
+.container{
+    max-width:500px;
+}
+
+h2{
+    color:#966737;
+}
+
+#status{
+    margin-top:20px;
+    font-size:18px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>📸 Odfoť sa a pošli</h2>
+    <div id="status">Otváram fotoaparát...</div>
+</div>
+
+<input
+    type="file"
+    id="cameraInput"
+    accept="image/*"
+    capture="environment"
+    style="display:none"
+>
+
+<script>
+
+const input = document.getElementById("cameraInput");
+const statusDiv = document.getElementById("status");
+
+window.onload = () => {
+    setTimeout(() => {
+        input.click();
+    }, 500);
+};
+
+input.addEventListener("change", function(){
+
+    if(!this.files.length){
+        statusDiv.innerHTML = "Fotografia nebola vybraná.";
+        return;
+    }
+
+    uploadFile(this.files[0]);
+});
+
+function uploadFile(file){
+
+    statusDiv.innerHTML = "Nahrávam fotografiu...";
+
+    const formData = new FormData();
+
+    formData.append("file", file);
+    formData.append("upload_preset", "svadba_viktoria_peter");
+
+    fetch(
+        "https://api.cloudinary.com/v1_1/da3roufa0/image/upload",
+        {
+            method:"POST",
+            body:formData
+        }
+    )
+    .then(response => response.json())
+    .then(data => {
+
+        if(data.secure_url){
+
+            statusDiv.innerHTML =
+            "❤️ Ďakujeme za nahratie fotografie ❤️";
+
+        }else{
+
+            statusDiv.innerHTML =
+            "Nastala chyba pri nahrávaní.";
+
+        }
+
+    })
+    .catch(() => {
+
+        statusDiv.innerHTML =
+        "Nastala chyba pripojenia.";
+
+    });
+}
+
+</script>
+
+</body>
+</html>
