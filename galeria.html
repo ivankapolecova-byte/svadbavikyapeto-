@@ -1,1 +1,126 @@
-galeria
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nahraj fotku z galérie</title>
+
+<style>
+body{
+    margin:0;
+    padding:20px;
+    font-family:Arial,sans-serif;
+    background:#ffffff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.container{
+    width:100%;
+    max-width:400px;
+    text-align:center;
+}
+
+button{
+    width:100%;
+    padding:18px;
+    border:none;
+    border-radius:50px;
+    background:#f3f3f3;
+    color:#966737;
+    font-size:22px;
+    cursor:pointer;
+    box-shadow:0 8px 20px rgba(0,0,0,0.12);
+}
+
+#status{
+    margin-top:25px;
+    color:#966737;
+    font-size:20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<button onclick="openGallery()">
+🖼️ Nahraj fotku z galérie
+</button>
+
+<div id="status"></div>
+
+</div>
+
+<input
+type="file"
+id="galleryInput"
+accept="image/*"
+style="display:none"
+>
+
+<script>
+
+const input = document.getElementById("galleryInput");
+const statusDiv = document.getElementById("status");
+
+function openGallery(){
+    input.click();
+}
+
+input.addEventListener("change", function(){
+
+    if(!this.files.length){
+        return;
+    }
+
+    uploadFile(this.files[0]);
+});
+
+function uploadFile(file){
+
+    statusDiv.innerHTML = "Nahrávam fotografiu...";
+
+    const formData = new FormData();
+
+    formData.append("file", file);
+    formData.append("upload_preset", "svadba_viktoria_peter");
+
+    fetch(
+        "https://api.cloudinary.com/v1_1/da3roufa0/image/upload",
+        {
+            method:"POST",
+            body:formData
+        }
+    )
+    .then(response => response.json())
+    .then(data => {
+
+        if(data.secure_url){
+
+            statusDiv.innerHTML =
+            "❤️ Ďakujeme za nahratie fotografie ❤️";
+
+        }else{
+
+            statusDiv.innerHTML =
+            "❌ Chyba pri nahrávaní.";
+
+        }
+
+    })
+    .catch(() => {
+
+        statusDiv.innerHTML =
+        "❌ Chyba pripojenia.";
+
+    });
+}
+
+</script>
+
+</body>
+</html>
