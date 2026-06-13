@@ -8,27 +8,37 @@
 <style>
 body{
     margin:0;
+    padding:20px;
     font-family:Arial,sans-serif;
     background:#ffffff;
     display:flex;
     justify-content:center;
     align-items:center;
     min-height:100vh;
-    text-align:center;
-    padding:20px;
 }
 
 .container{
-    max-width:500px;
+    width:100%;
+    max-width:400px;
+    text-align:center;
 }
 
-h2{
+button{
+    width:100%;
+    padding:18px;
+    border:none;
+    border-radius:50px;
+    background:#f3f3f3;
     color:#966737;
+    font-size:22px;
+    cursor:pointer;
+    box-shadow:0 8px 20px rgba(0,0,0,0.12);
 }
 
 #status{
-    margin-top:20px;
-    font-size:18px;
+    margin-top:25px;
+    color:#966737;
+    font-size:20px;
 }
 </style>
 </head>
@@ -36,16 +46,21 @@ h2{
 <body>
 
 <div class="container">
-    <h2>📸 Odfoť sa a pošli</h2>
-    <div id="status">Otváram fotoaparát...</div>
+
+<button onclick="openCamera()">
+📸 Odfoť sa a pošli
+</button>
+
+<div id="status"></div>
+
 </div>
 
 <input
-    type="file"
-    id="cameraInput"
-    accept="image/*"
-    capture="environment"
-    style="display:none"
+type="file"
+id="cameraInput"
+accept="image/*"
+capture="environment"
+style="display:none"
 >
 
 <script>
@@ -53,16 +68,13 @@ h2{
 const input = document.getElementById("cameraInput");
 const statusDiv = document.getElementById("status");
 
-window.onload = () => {
-    setTimeout(() => {
-        input.click();
-    }, 500);
-};
+function openCamera(){
+    input.click();
+}
 
 input.addEventListener("change", function(){
 
     if(!this.files.length){
-        statusDiv.innerHTML = "Fotografia nebola vybraná.";
         return;
     }
 
@@ -96,7 +108,7 @@ function uploadFile(file){
         }else{
 
             statusDiv.innerHTML =
-            "Nastala chyba pri nahrávaní.";
+            "❌ Chyba pri nahrávaní.";
 
         }
 
@@ -104,7 +116,7 @@ function uploadFile(file){
     .catch(() => {
 
         statusDiv.innerHTML =
-        "Nastala chyba pripojenia.";
+        "❌ Chyba pripojenia.";
 
     });
 }
